@@ -4,6 +4,7 @@
  * Description: Automatikusan sikertelenre állítja a rendeléseket, ha a számlázási vagy szállítási cím "Deak Ferenc ter 1" vagy hasonló variáció.
  * Version: 1.1.0
  * Author: TrueQAP
+ * Author URI: https://github.com/trueqap/deak-ter-gate
  * Requires Plugins: woocommerce
  * Text Domain: deak-ter-gate
  */
