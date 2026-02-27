@@ -38,7 +38,3 @@ Ha a számlázási vagy szállítási cím tartalmazza a blokkolt mintát (ékez
 - WordPress 6.0+
 - WooCommerce 8.0+
 - PHP 8.0+
-
-## Szerző
-
-[TrueQAP](https://github.com/trueqap)
