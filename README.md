@@ -4,7 +4,7 @@ WooCommerce bővítmény, amely automatikusan **sikertelenre (`failed`)** állí
 
 ## Letöltés
 
-**[deak-ter-gate-1.1.0.zip](https://github.com/trueqap/deak-ter-gate/releases/download/v1.1.0/deak-ter-gate-1.1.0.zip)** – közvetlenül telepíthető WordPress adminból.
+**[deak-ter-gate-1.2.0.zip](https://github.com/trueqap/deak-ter-gate/releases/download/v1.2.0/deak-ter-gate-1.2.0.zip)** – közvetlenül telepíthető WordPress adminból.
 
 ## Telepítés
 
