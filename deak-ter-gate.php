@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Deák Tér Gate
  * Description: Automatikusan sikertelenre állítja a rendeléseket, ha a számlázási vagy szállítási cím "Deak Ferenc ter 1" vagy hasonló variáció.
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: TrueQAP
  * Author URI: https://github.com/trueqap/deak-ter-gate
  * Requires Plugins: woocommerce
@@ -17,19 +17,17 @@ add_action( 'woocommerce_checkout_order_created', 'dtg_check_order_address', 10,
 // Blocks / Store API checkout.
 add_action( 'woocommerce_store_api_checkout_order_processed', 'dtg_check_order_address', 10, 1 );
 
-// Minden egyéb eset (API, admin, stb.) – új rendelés processing státuszba kerülésekor.
+// Safety net: COD és egyéb gateway-ek felülírhatják a státuszt a fenti hookok után,
+// ezért processing-re váltáskor újra ellenőrzünk.
 add_action( 'woocommerce_order_status_processing', 'dtg_check_order_address_by_id', 10, 1 );
 
 /**
  * Rendelés objektumból ellenőriz.
  */
 function dtg_check_order_address( $order ) {
-	if ( $order->get_meta( '_dtg_checked' ) ) {
+	if ( 'failed' === $order->get_status() ) {
 		return;
 	}
-
-	$order->update_meta_data( '_dtg_checked', '1' );
-	$order->save_meta_data();
 
 	$blocked_patterns = array(
 		'deak ferenc ter 1',
@@ -48,6 +46,13 @@ function dtg_check_order_address( $order ) {
 
 		foreach ( $blocked_patterns as $pattern ) {
 			if ( str_contains( $normalized, $pattern ) ) {
+				$matched_address = $address;
+				$order->add_order_note(
+					sprintf(
+						'[Deák Tér Gate] Blokkolt cím észlelve: "%s". Rendelés failed státuszra állítva.',
+						$matched_address
+					)
+				);
 				$order->update_status( 'failed', __( 'Automatikusan elutasítva: blokkolt cím (Deák Ferenc tér 1).', 'deak-ter-gate' ) );
 				return;
 			}
