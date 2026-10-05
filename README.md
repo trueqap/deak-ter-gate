@@ -4,7 +4,7 @@ WooCommerce bővítmény, amely blokkolt cím alapján megakadályozza a spam re
 
 ## Letöltés
 
-**[deak-ter-gate-1.4.0.zip](https://github.com/trueqap/deak-ter-gate/releases/download/v1.4.0/deak-ter-gate-1.4.0.zip)** – közvetlenül telepíthető WordPress adminból.
+A telepíthető zip a **[legfrissebb release](https://github.com/trueqap/deak-ter-gate/releases/latest)** alatt van (`deak-ter-gate-<verzió>.zip`) – közvetlenül telepíthető WordPress adminból. A zipet a GitHub Action állítja elő minden új verzióhoz: a `main`-re pusholt verzióemelés (`Version:` a `deak-ter-gate.php` fejlécében) automatikusan taget, release-t és zipet készít.
 
 ## Telepítés
 
