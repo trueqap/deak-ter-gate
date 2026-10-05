@@ -35,6 +35,14 @@ A címet normalizálva hasonlítja: ékezetek nélkül, kisbetűvel, az írásje
 
 A `Deák Ferenc tér 12` vagy a `Deák Ferenc utca 1` nem egyezik.
 
+## Változások
+
+Lásd: [CHANGELOG.md](CHANGELOG.md).
+
+## Kiadás
+
+Új verzióhoz ugyanazt a számot írd mind a négy helyre: `deak-ter-gate.php` `Version:`, `readme.txt` `Stable tag:` és `== Changelog ==`, valamint egy új `CHANGELOG.md`-bejegyzés. A CI ellenőrzi, hogy egyeznek. A `main`-re pusholt verzióemelés után a Release workflow elkészíti a `v<verzió>` taget, a release-t és a telepíthető zipet, a release leírása pedig a verzió CHANGELOG-bejegyzése lesz.
+
 ## Követelmények
 
 - WordPress 6.0+

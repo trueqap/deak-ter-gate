@@ -27,3 +27,27 @@ jobs:
 
       - name: Syntax check
         run: find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
+
+  version:
+    name: Version consistency
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # One release = one version: the plugin header, readme.txt's Stable tag
+      # and the top entry of both changelogs must all carry the same number.
+      - name: Compare versions
+        run: |
+          HEADER=$(grep -m1 "Version:" deak-ter-gate.php | sed 's/.*Version:[[:space:]]*//' | tr -d '[:space:]')
+          STABLE=$(grep -m1 "^Stable tag:" readme.txt | sed 's/^Stable tag:[[:space:]]*//' | tr -d '[:space:]')
+          README_LOG=$(grep -m1 -E "^= [0-9]" readme.txt | sed -E 's/^= ([^ ]+) =.*/\1/')
+          CHANGELOG=$(grep -m1 -E "^## \[" CHANGELOG.md | sed -E 's/^## \[([^]]+)\].*/\1/')
+          echo "header=$HEADER stable=$STABLE readme.txt=$README_LOG CHANGELOG.md=$CHANGELOG"
+          for v in "$STABLE" "$README_LOG" "$CHANGELOG"; do
+            if [ "$v" != "$HEADER" ]; then
+              echo "::error::Version mismatch - bump all of: plugin header, Stable tag, readme.txt changelog, CHANGELOG.md"
+              exit 1
+            fi
+          done

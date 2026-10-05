@@ -84,6 +84,21 @@ jobs:
             --exclude='*.log' . dist/deak-ter-gate/
           cd dist && zip -r "deak-ter-gate-${VERSION}.zip" deak-ter-gate/
 
+      # The release body is the version's CHANGELOG.md entry.
+      - name: Release notes
+        if: steps.check_release.outputs.exists == 'false'
+        env:
+          VERSION: ${{ steps.get_version.outputs.version }}
+        run: |
+          {
+            echo "## Deák Tér Gate v${VERSION}"
+            echo
+            echo "**Telepítés:** töltsd le a \`deak-ter-gate-${VERSION}.zip\` fájlt, majd WordPress admin → Bővítmények → Új hozzáadása → Bővítmény feltöltése, és aktiváld."
+            echo
+            awk -v v="$VERSION" '$0 ~ "^## \\[" v "\\]" {f=1; next} /^## \[/ {f=0} f' CHANGELOG.md
+          } > dist/release-notes.md
+          cat dist/release-notes.md
+
       - name: Create tag and release
         if: steps.check_release.outputs.exists == 'false'
         uses: softprops/action-gh-release@v3
@@ -92,12 +107,9 @@ jobs:
         with:
           tag_name: v${{ steps.get_version.outputs.version }}
           name: v${{ steps.get_version.outputs.version }}
-          body: |
-            ## Deák Tér Gate v${{ steps.get_version.outputs.version }}
-
-            **Telepítés:** töltsd le a `deak-ter-gate-${{ steps.get_version.outputs.version }}.zip` fájlt, majd WordPress admin → Bővítmények → Új hozzáadása → Bővítmény feltöltése, és aktiváld.
+          body_path: dist/release-notes.md
           files: |
             dist/deak-ter-gate-${{ steps.get_version.outputs.version }}.zip
           draft: false
           prerelease: false
-          generate_release_notes: true
+          generate_release_notes: false
