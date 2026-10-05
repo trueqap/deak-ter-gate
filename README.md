@@ -1,10 +1,10 @@
 # Deák Tér Gate
 
-WooCommerce bővítmény, amely automatikusan **sikertelenre (`failed`)** állítja a spam rendeléseket blokkolt cím alapján.
+WooCommerce bővítmény, amely blokkolt cím alapján megakadályozza a spam rendeléseket: a checkout elutasítja őket, ami mégis átjut, az **sikertelen (`failed`)** státuszt kap.
 
 ## Letöltés
 
-**[deak-ter-gate-1.3.0.zip](https://github.com/trueqap/deak-ter-gate/releases/download/v1.3.0/deak-ter-gate-1.3.0.zip)** – közvetlenül telepíthető WordPress adminból.
+**[deak-ter-gate-1.4.0.zip](https://github.com/trueqap/deak-ter-gate/releases/download/v1.4.0/deak-ter-gate-1.4.0.zip)** – közvetlenül telepíthető WordPress adminból.
 
 ## Telepítés
 
@@ -14,24 +14,26 @@ WooCommerce bővítmény, amely automatikusan **sikertelenre (`failed`)** állí
 
 ## Hogyan működik?
 
-A plugin három hookon figyel, hogy semmilyen checkout útvonalat ne lehessen kikerülni:
+A plugin három rétegben figyel, hogy semmilyen checkout útvonalat ne lehessen kikerülni:
 
-| Hook | Mikor fut |
-|------|-----------|
-| `woocommerce_checkout_order_created` | Classic checkout |
-| `woocommerce_store_api_checkout_order_processed` | Blocks / Store API checkout |
-| `woocommerce_order_status_processing` | Fallback (API, admin, egyéb) |
-
-Ha a számlázási vagy szállítási cím tartalmazza a blokkolt mintát (ékezetes és ékezet nélküli variációk), a rendelés azonnal `failed` státuszba kerül, és egy megjegyzés kerül a rendeléshez:
+1. **Checkout-validáció** – a rendelés létre sem jön (nincs rendelés-levél, nincs készletfoglalás), a vásárló ezt látja: *„A megadott címre nem tudunk rendelést fogadni.”*
+   - Classic checkout: `woocommerce_after_checkout_validation`
+   - Blocks / Store API checkout: `woocommerce_store_api_checkout_update_order_from_request` (csak a leadáskor, POST)
+2. **Fizetési módok státusz-filterei** – utánvét (`cod`), banki átutalás (`bacs`) és csekk (`cheque`) esetén a rendelés `failed` státuszt kap a `processing` / `on-hold` helyett.
+3. **Safety net** – ha egy rendelés bármilyen úton `processing` vagy `on-hold` státuszba kerül (API, admin, más fizetési mód), utólag `failed`-re állítja, és megjegyzést fűz hozzá:
 
 > Automatikusan elutasítva: blokkolt cím (Deák Ferenc tér 1).
 
+A számlázási és a szállítási cím első sorát vizsgálja.
+
 ## Blokkolt minták
 
-- `deak ferenc ter 1`
-- `deák ferenc tér 1`
-- `deak ferenc tér 1`
-- `deák ferenc ter 1`
+A címet normalizálva hasonlítja: ékezetek nélkül, kisbetűvel, az írásjeleket szóközzé alakítva. Így ezek mind egyeznek:
+
+- `Deak Ferenc ter 1`, `Deák Ferenc tér 1.`, `DEAK  FERENC TER 1`
+- `Deák F. tér 1`, `Deák Ferenc-tér 1`, `Deák Ferenc tér 1/a`
+
+A `Deák Ferenc tér 12` vagy a `Deák Ferenc utca 1` nem egyezik.
 
 ## Követelmények
 
